@@ -1,7 +1,7 @@
 ---
 - name: aws_connection | Use an IAM role for AWS
   when: aws_account | default(false)
-  no_log: true
+  # no_log: true
   block:
   - name: aws_connection | Assume the SCM IAM role
     amazon.aws.sts_assume_role:
