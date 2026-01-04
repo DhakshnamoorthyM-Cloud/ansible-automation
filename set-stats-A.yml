@@ -1,0 +1,9 @@
+---
+- name: Job A Template
+  hosts: all
+  become: true
+  gather_facts: false 
+
+  tasks:
+    - name: Authenticate AWS
+      ansible.builtin.include_tasks: tasks/aws-connection.yml

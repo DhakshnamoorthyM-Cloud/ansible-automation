@@ -1,0 +1,21 @@
+---
+- name: aws_connection | Use an IAM role for AWS
+  when: aws_account | default(false)
+  no_log: true
+  block:
+  - name: aws_connection | Assume the SCM IAM role
+    amazon.aws.sts_assume_role:
+      role_arn: "arn:aws:iam::{{ aws_account }}:role/{{ iam_role }}"
+      role_session_name: "SSMRoleSession"
+      duration_seconds: 14400 # 4 hours
+    register: assumed_role
+    check_mode: false
+    delegate_to: localhost
+
+  - name: aws_connection | Set the AWS creds when using IAM role
+    ansible.builtin.set_fact:
+      ansible_aws_ssm_access_key_id: "{{ assumed_role.sts_creds.access_key }}"
+      ansible_aws_ssm_secret_access_key: "{{ assumed_role.sts_creds.secret_key }}"
+      ansible_aws_ssm_session_token: "{{ assumed_role.sts_creds.session_token }}"
+    check_mode: false
+...
